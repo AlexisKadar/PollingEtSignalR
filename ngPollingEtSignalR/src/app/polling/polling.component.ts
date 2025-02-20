@@ -27,18 +27,18 @@ export class PollingComponent implements OnInit {
 
   ngOnInit(): void {
     this.updateTasks();
+    this.polling();
   }
 
   complete(id: number) {
     // TODO On invoke la méthode pour compléter une tâche sur le serveur (Contrôleur d'API)
-    let x = lastValueFrom(this.http.post<any>('https://localhost:7289/api/UselessTasks/Complete', id))
+    let x = lastValueFrom(this.http.get<any>('https://localhost:7289/api/UselessTasks/Complete/' + id))
   }
 
   addtask() {
     // TODO On invoke la méthode pour ajouter une tâche sur le serveur (Contrôleur d'API)
-    let taskData = { taskText: this.taskname };
 
-    let x = lastValueFrom(this.http.post<any>('https://localhost:7289/api/UselessTasks/Add', this.taskname))
+    let x = lastValueFrom(this.http.post<any>('https://localhost:7289/api/UselessTasks/Add?taskText=' + this.taskname, null))
 
     console.log(this.tasks);
   }
@@ -46,8 +46,17 @@ export class PollingComponent implements OnInit {
   async updateTasks() {
     // TODO: Faire une première implémentation simple avec un appel au serveur pour obtenir la liste des tâches
     // TODO: UNE FOIS QUE VOUS AVEZ TESTER AVEC DEUX CLIENTS: Utiliser le polling pour mettre la liste de tasks à jour chaque seconde
-    let x = lastValueFrom(this.http.get<any>('https://localhost:7289/api/UselessTasks/GetAll'))
+    let x = await lastValueFrom(this.http.get<any>('https://localhost:7289/api/UselessTasks/GetAll'))
     console.log(x)
     
+    this.tasks = x;
+    
+  }
+
+  async polling() {
+    console.log("======= Je polle ======");
+    await this.updateTasks();
+    //On recommence dans 0.5 seconde en rappelant la même méthode
+    setTimeout(() => {this.polling()}, 500);
   }
 }
