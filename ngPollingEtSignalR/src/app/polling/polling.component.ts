@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, numberAttribute, OnInit } from '@angular/core';
 import { UselessTask } from '../models/UselessTask';
 import { HttpClient } from '@angular/common/http';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -31,13 +31,14 @@ export class PollingComponent implements OnInit {
 
   complete(id: number) {
     // TODO On invoke la méthode pour compléter une tâche sur le serveur (Contrôleur d'API)
-    
+    let x = lastValueFrom(this.http.post<any>('https://localhost:7289/api/UselessTasks/Complete', id))
   }
 
   addtask() {
     // TODO On invoke la méthode pour ajouter une tâche sur le serveur (Contrôleur d'API)
+    let taskData = { taskText: this.taskname };
 
-    
+    let x = lastValueFrom(this.http.post<any>('https://localhost:7289/api/UselessTasks/Add', this.taskname))
 
     console.log(this.tasks);
   }
@@ -45,6 +46,8 @@ export class PollingComponent implements OnInit {
   async updateTasks() {
     // TODO: Faire une première implémentation simple avec un appel au serveur pour obtenir la liste des tâches
     // TODO: UNE FOIS QUE VOUS AVEZ TESTER AVEC DEUX CLIENTS: Utiliser le polling pour mettre la liste de tasks à jour chaque seconde
+    let x = lastValueFrom(this.http.get<any>('https://localhost:7289/api/UselessTasks/GetAll'))
+    console.log(x)
     
   }
 }
